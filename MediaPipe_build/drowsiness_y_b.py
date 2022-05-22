@@ -149,28 +149,33 @@ with mp_face_mesh.FaceMesh(
                 total += 1
             cv.putText(image, f'mar_ratio: {round(mar_ratio, 3),total}', (100, 50), cv.FONT_HERSHEY_COMPLEX, 0.7, (0, 0, 255), 1)
             cv.putText(image, f'ear_ratio: {round(ratio, 3)}', (10, 30), cv.FONT_HERSHEY_COMPLEX, 0.7, (0, 0, 255), 1)
-            if  (mar_ratio > 0.7) :
+            if (mar_ratio > 0.7):
                 counter_m += 1
-                
-                if (counter_m > 3) & (total >= fps * 5 ):
-                    cv.putText(image, 'You are drowsy', (150, 30), cv.FONT_HERSHEY_COMPLEX, 0.7, (0, 0, 0), 3)
-                    drowsy_detected += 1
-                    total = 0
-                    counter_m = 0
-                elif (total >= fps *5 ):
-                    total = 0
-                    counter_m = 0
-            elif (ratio < 0.3):
+            if ( ratio < 0.3 ):
                 counter_e += 1
+                             
+            if (counter_e > 6) & (total >= fps * 5 ):
+                # cv.putText(image, 'You are drowsy', (150, 30), cv.FONT_HERSHEY_COMPLEX, 0.7, (0, 0, 0), 3)
+                # drowsy_detected += 1
+                # total = 0
+                counter_e = 0
+                e_true = True 
+            elif (total >= fps *5 ):
+                e_true =False 
+                # total = 0
+                counter_e = 0
 
-                if (counter_e > 6) & (total >= fps * 5 ):
+            
+            if (counter_m > 3) & (total >= fps * 15 ) :
+                if e_true: 
                     cv.putText(image, 'You are drowsy', (150, 30), cv.FONT_HERSHEY_COMPLEX, 0.7, (0, 0, 0), 3)
                     drowsy_detected += 1
                     total = 0
-                    counter_e = 0
-                elif (total >= fps *5 ):
-                    total = 0
-                    counter_e = 0
+                    counter_m = 0
+                     
+            elif (total >= fps *15 ):
+                total = 0
+                counter_m = 0
 
 
             cv.putText(image, f'{drowsy_detected} drowsiness detections', (350, 30), cv.FONT_HERSHEY_COMPLEX, 0.7, (0, 0, 255), 2)
